@@ -4,7 +4,7 @@
 
 trigger:
   - main
-  - demo
+  - dev
 
 resources:
   - repo: self
@@ -12,7 +12,7 @@ resources:
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: "f4f94a44-0505-4235-9347-4926b8fef7a4"
-  imageRepository: "trn-node-docker"
+  imageRepository: "trn-node-docker-zs-gy"
   containerRegistry: "mentorklub.azurecr.io"
   dockerfilePath: "$(Build.SourcesDirectory)/Dockerfile"
   tag: "$(Build.BuildId)"
