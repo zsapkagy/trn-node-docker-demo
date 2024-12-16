@@ -47,18 +47,7 @@ stages:
       - job: basic_check
         displayName: Kód ellenőrzés
         steps:
-          - task: NodeTool@0
-            displayName: "NodeJs 20 telepítés"
-            inputs:
-              versionSpec: "20.x"
-          - task: Bash@3
-            name: install_dependencies
-            displayName: Függőségek teleptése
-            inputs:
-              targetType: "inline"
-              script: |
-                npm upgrade
-                npm install
+          - template: templates/node-setup.yml
           - task: Bash@3
             name: node_check
             displayName: "NodeJS - Kód ellenőrzés"
@@ -91,18 +80,7 @@ stages:
       - job: basic_check
         displayName: Funkció ellenőrzés
         steps:
-          - task: NodeTool@0
-            displayName: "NodeJs 20 telepítés"
-            inputs:
-              versionSpec: "20.x"
-          - task: Bash@3
-            name: install_dependencies
-            displayName: Függőségek teleptése
-            inputs:
-              targetType: "inline"
-              script: |
-                npm upgrade
-                npm install
+          - template: templates/node-setup.yml
           - task: Bash@3
             name: unit_tests
             displayName: "Funkcionális tesztek futtatása"

@@ -1,0 +1,16 @@
+parameters:
+  nodeVersion: "20.x"
+
+steps:
+  - task: NodeTool@0
+    displayName: "NodeJs ${{ parameters.nodeVersion }} telepítés"
+    inputs:
+      versionSpec: "${{ parameters.nodeVersion }}"
+  - task: Bash@3
+    name: install_dependencies
+    displayName: Függőségek teleptése
+    inputs:
+      targetType: "inline"
+      script: |
+        npm upgrade
+        npm install
