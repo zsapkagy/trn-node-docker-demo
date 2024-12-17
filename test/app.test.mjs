@@ -18,7 +18,7 @@ describe("Unit test: Nyitó oldal", () => {
     return request(app)
       .get("/")
       .then((response) => {
-        expect(response.text).to.contain("Azu__re");
+        expect(response.text).to.contain("Azure");
       });
   });
 });
