@@ -4,7 +4,7 @@
 
 trigger:
   - main
-  - demo
+  - dev
 
 resources:
   - repo: self
@@ -12,7 +12,7 @@ resources:
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: "f4f94a44-0505-4235-9347-4926b8fef7a4"
-  imageRepository: "trn-node-docker"
+  imageRepository: "trn-node-docker-zs-gy"
   containerRegistry: "mentorklub.azurecr.io"
   dockerfilePath: "$(Build.SourcesDirectory)/Dockerfile"
   tag: "$(Build.BuildId)"
@@ -20,15 +20,18 @@ variables:
   # Agent VM image name
   vmImageName: "ubuntu-latest"
 
+  # NPM cache location
+  npm_config_cache: $(Pipeline.Workspace)/.npm
+
 stages:
   - stage: Build
     displayName: CD - Épít és feltölt
     condition: eq(variables['Build.reason'], 'IndividualCI')
+    pool:
+      vmImage: $(vmImageName)
     jobs:
       - job: Build
         displayName: Építés (Build)
-        pool:
-          vmImage: $(vmImageName)
         steps:
           - task: Docker@2
             displayName: Kép építése és feltöltése a Azure ACR-be
@@ -47,18 +50,15 @@ stages:
       - job: basic_check
         displayName: Kód ellenőrzés
         steps:
-          - task: NodeTool@0
-            displayName: "NodeJs 20 telepítés"
+          - task: Cache@2
             inputs:
-              versionSpec: "20.x"
-          - task: Bash@3
-            name: install_dependencies
-            displayName: Függőségek teleptése
-            inputs:
-              targetType: "inline"
-              script: |
-                npm upgrade
-                npm install
+              key: 'npm | "$(Agent.OS)" | package-lock.json'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+              path: $(npm_config_cache)
+            displayName: Cache npm packages
+
+          - template: templates/node-setup.yml
           - task: Bash@3
             name: node_check
             displayName: "NodeJS - Kód ellenőrzés"
@@ -91,18 +91,15 @@ stages:
       - job: basic_check
         displayName: Funkció ellenőrzés
         steps:
-          - task: NodeTool@0
-            displayName: "NodeJs 20 telepítés"
+          - task: Cache@2
             inputs:
-              versionSpec: "20.x"
-          - task: Bash@3
-            name: install_dependencies
-            displayName: Függőségek teleptése
-            inputs:
-              targetType: "inline"
-              script: |
-                npm upgrade
-                npm install
+              key: 'npm | "$(Agent.OS)" | package-lock.json'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+              path: $(npm_config_cache)
+            displayName: Cache npm packages
+
+          - template: templates/node-setup.yml
           - task: Bash@3
             name: unit_tests
             displayName: "Funkcionális tesztek futtatása"
